@@ -19,36 +19,6 @@ var topics = [
     "puncak jaya"
 ]
 
-var APIKey = "r2kqhlSIjqyRxoLRa3nNsR8rATxYv3Xm";
-var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + newTopic + "&api_key=" + APIKey;
-var newTopic;
-
-// ajax call
-$("#mountain").on("click", function() {
-    $.ajax({
-        url: queryURL,
-        method: "GET"
-    }
-        // retrieve the gifs and the data
-        // append the gifs and data to the div
-        // show gifs as stopped
-
-        /*// click gif start
-        $().on("click", function() {
-            event.preventDefault();
-
-        })
-
-
-        // click gif end
-        $().on("click", function() {
-            event.preventDefault();
-            
-        })*/
-    ) 
-})
-
-
 // attach button to each string in array
 function renderAllBtns() {
     for (i=0; i<topics.length; i++) {
@@ -56,24 +26,65 @@ function renderAllBtns() {
         topicBtn.addClass("mountain btn btn-light mr-2 mb-2");
         topicBtn.attr("name", topics[i]);
         topicBtn.text(topics[i]);
-        $("#everything").append(topicBtn);
-        console.log(topics[i]);
-        console.log(topicBtn);
+        $("#buttons-go-here").append(topicBtn);
     }
+    console.log(topics);
 }
 
 renderAllBtns();
 
 // click submit and add to array of buttons
-$("#submit").on("click", function() {
+$("#submit").on("click", function(event) {
     event.preventDefault();
     newTopic = $("#input").val().trim();
     topics.push(newTopic);
 
-    // append the last topic/button added to the array
+    // render the last topic added to the array as a button
     topicBtn = $("<button>");
     topicBtn.addClass("mountain btn btn-light mr-2 mb-2");
     topicBtn.attr("name", topics[topics.length - 1]);
     topicBtn.text(topics[topics.length - 1]);
-    $("#everything").append(topicBtn);
+    $("#buttons-go-here").append(topicBtn);
+
+    console.log(topics);
 })
+
+// ajax call when click a button
+// problem 1: this doesn't work at all for new topics added to array
+// problem 2: gif's are not showing on document
+$(".mountain").on("click", function(event) {
+    event.preventDefault();
+
+    var searchGiphy = $(this).attr("name");
+    console.log(searchGiphy);
+    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + searchGiphy + "&limit=10&api_key=r2kqhlSIjqyRxoLRa3nNsR8rATxYv3Xm";
+
+    $.ajax({
+        url: queryURL,
+        method: "GET"
+    })
+        .then(function(response) {
+            console.log(queryURL);
+            
+            // for each search result, get rating and src
+            if (response.data.length === 0) {
+                $("#gifs-go-here").text("Sorry, no GIFs to report");
+            }
+            else {
+                for (i=0; i<response.data.length; i++) {
+                    var gifsGoHere = $("<div");
+                    var rating = $("<p>").text("Rating: " + response.data[i].rating);
+                    var mountainPic = $("<img>");
+                    mountainPic.attr("src", response.data[i].images.fixed_width_still.url);
+                    mountainPic.attr("image-state", "still");
+                    gifsGoHere.append(rating);
+                    gifsGoHere.append(mountainPic);
+                    $("#gifs-go-here").append(gifsGoHere);
+                }
+            }
+        });
+})
+    
+
+
+
