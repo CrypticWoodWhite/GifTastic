@@ -19,7 +19,7 @@ var topics = [
     "puncak jaya"
 ]
 
-// attach button to each string in array
+// create a button for each string in array
 function renderAllBtns() {
     for (i=0; i<topics.length; i++) {
         topicBtn = $("<button>");
@@ -47,13 +47,13 @@ $("#submit").on("click", function(event) {
     topicBtn.text(topics[topics.length - 1]);
     $("#buttons-go-here").append(topicBtn);
 
+    // reset the input form
     $("#input").val("Add a mountain here");
 
     console.log(topics);
 })
 
 // ajax call when click a button
-// problem 1: this doesn't work at all for new topics added to array
 $("#buttons-go-here").on("click", ".mountain", function(event) {
     event.preventDefault();
 
@@ -73,10 +73,10 @@ $("#buttons-go-here").on("click", ".mountain", function(event) {
             // clears the div of any gifs from previous click
             $("#gifs-go-here").html("");
 
-            // for each search result, get rating and src for still and animated gif
             if (results.length === 0) {
                 $("#gifs-go-here").html("<p>Sorry, no GIFs to report :(</p>");
             }
+            // for each search result, get rating and src for still and animated gif
             else {
                 for (i=0; i<results.length; i++) {
                     gifsGoHere = $("<div>");
@@ -95,6 +95,8 @@ $("#buttons-go-here").on("click", ".mountain", function(event) {
         });
 })
 
+// start and stop gif on click
+// learned that I have to select the wrapper element rather than the gifs because the gifs are dynamically created
 $("#gifs-go-here").on("click", ".gif", function(event) {
     event.preventDefault();
 
