@@ -36,6 +36,7 @@ renderAllBtns();
 // click submit and add to array of buttons
 $("#submit").on("click", function(event) {
     event.preventDefault();
+
     newTopic = $("#input").val().trim();
     topics.push(newTopic);
 
@@ -46,13 +47,14 @@ $("#submit").on("click", function(event) {
     topicBtn.text(topics[topics.length - 1]);
     $("#buttons-go-here").append(topicBtn);
 
+    $("#input").val("Add a mountain here");
+
     console.log(topics);
 })
 
 // ajax call when click a button
 // problem 1: this doesn't work at all for new topics added to array
-// problem 2: gif's are not showing on document
-$(".mountain").on("click", function(event) {
+$("#buttons-go-here").on("click", ".mountain", function(event) {
     event.preventDefault();
 
     var searchGiphy = $(this).attr("name");
@@ -93,19 +95,21 @@ $(".mountain").on("click", function(event) {
         });
 })
 
-$(".gif").on("click", function(event) {
+$("#gifs-go-here").on("click", ".gif", function(event) {
     event.preventDefault();
 
     var state = $(this).attr("image-state");
-    console.log("This gif's current state is: " + state);
+    console.log("This gif's state before click was: " + state);
 
     if (state === "still") {
         $(this).attr("src", $(this).attr("src-animate"));
         $(this).attr("image-state", "animate");
+        console.log("We are animated!");
     }
     else if (state === "animate") {
         $(this).attr("src", $(this).attr("src-still"));
         $(this).attr("image-state", "still");
+        console.log("We are stilled!");
     }
 })
     
