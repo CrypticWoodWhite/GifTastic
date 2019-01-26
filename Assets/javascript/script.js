@@ -65,24 +65,48 @@ $(".mountain").on("click", function(event) {
     })
         .then(function(response) {
             console.log(queryURL);
+
+            var results = response.data;
             
-            // for each search result, get rating and src
-            if (response.data.length === 0) {
-                $("#gifs-go-here").text("Sorry, no GIFs to report");
+            // clears the div of any gifs from previous click
+            $("#gifs-go-here").html("");
+
+            // for each search result, get rating and src for still and animated gif
+            if (results.length === 0) {
+                $("#gifs-go-here").html("<p>Sorry, no GIFs to report :(</p>");
             }
             else {
-                for (i=0; i<response.data.length; i++) {
-                    var gifsGoHere = $("<div");
-                    var rating = $("<p>").text("Rating: " + response.data[i].rating);
-                    var mountainPic = $("<img>");
-                    mountainPic.attr("src", response.data[i].images.fixed_width_still.url);
+                for (i=0; i<results.length; i++) {
+                    gifsGoHere = $("<div>");
+                    rating = $("<p>").text("Rating: " + results[i].rating);
+                    mountainPic = $("<img>");
+                    mountainPic.attr("src", results[i].images.fixed_height_still.url);
+                    mountainPic.attr("src-still", results[i].images.fixed_height_still.url);
+                    mountainPic.attr("src-animate", results[i].images.fixed_height.url);
                     mountainPic.attr("image-state", "still");
-                    gifsGoHere.append(rating);
+                    mountainPic.addClass("gif");
                     gifsGoHere.append(mountainPic);
-                    $("#gifs-go-here").append(gifsGoHere);
+                    gifsGoHere.append(rating);
+                    $("#gifs-go-here").prepend(gifsGoHere);
                 }
             }
         });
+})
+
+$(".gif").on("click", function(event) {
+    event.preventDefault();
+
+    var state = $(this).attr("image-state");
+    console.log("This gif's current state is: " + state);
+
+    if (state === "still") {
+        $(this).attr("src", $(this).attr("src-animate"));
+        $(this).attr("image-state", "animate");
+    }
+    else if (state === "animate") {
+        $(this).attr("src", $(this).attr("src-still"));
+        $(this).attr("image-state", "still");
+    }
 })
     
 
